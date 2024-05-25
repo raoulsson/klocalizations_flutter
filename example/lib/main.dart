@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var theme = Theme.of(context);
     var klocalizations = KLocalizations.of(context);
 
+    var headline5;
     return Scaffold(
       appBar: AppBar(
         title: LocalizedText(widget.title),
@@ -79,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             LocalizedText(
               'home.welcome',
-              style: theme.textTheme.headline5,
+              style: theme.textTheme.bodyMedium,
             ),
             LanguageSelector(
               locale: klocalizations!.locale,
