@@ -17,3 +17,6 @@
 
 ## 0.0.8
 * KLocalizationsLoader does not require params, it's up to each implementation to ask for specific params
+
+## 0.0.9
+* Updated dependencies
