@@ -118,7 +118,7 @@ class KLocalizations extends ChangeNotifier {
     dynamic translation;
 
     if (key.contains('.')) {
-      translation = getValueFromPath(key, _localizedStrings);
+      translation = _localizedStrings[key] ?? getValueFromPath(key, _localizedStrings);
     } else {
       translation = _localizedStrings[key];
     }
