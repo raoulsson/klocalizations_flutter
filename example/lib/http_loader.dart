@@ -19,12 +19,15 @@ class HttpLoader extends KLocalizationsLoader {
     return json.decode(jsonString);
   }
 
-  Future _loadStringForCurrentLocale(Locale locale) {
+  Future<String> _loadStringForCurrentLocale(Locale locale) {
     return _client
-        .get(Uri.parse(url + '/' + locale.languageCode + '.json'))
+        .get(Uri.parse('$url/${locale.languageCode}.json'))
         .then(
           (value) => value.body,
         )
-        .catchError(print);
+        .catchError((Object error) {
+          print(error);
+          return '';
+        });
   }
 }

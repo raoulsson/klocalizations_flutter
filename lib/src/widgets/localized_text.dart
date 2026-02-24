@@ -70,15 +70,11 @@ class LocalizedText extends StatelessWidget {
   /// from the nearest [DefaultTextStyle] ancestor will be used.
   final TextOverflow? overflow;
 
-  /// The number of font pixels for each logical pixel.
+  /// The text scaler to use for scaling the text.
   ///
-  /// For example, if the text scale factor is 1.5, text will be 50% larger than
-  /// the specified font size.
-  ///
-  /// The value given to the constructor as textScaleFactor. If null, will
-  /// use the [MediaQueryData.textScaleFactor] obtained from the ambient
-  /// [MediaQuery], or 1.0 if there is no [MediaQuery] in scope.
-  final double? textScaleFactor;
+  /// If null, will use the [MediaQueryData.textScaler] obtained from the
+  /// ambient [MediaQuery].
+  final TextScaler? textScaler;
 
   /// An optional maximum number of lines for the text to span, wrapping if necessary.
   /// If the text exceeds the given number of lines, it will be truncated according
@@ -114,7 +110,7 @@ class LocalizedText extends StatelessWidget {
 
   const LocalizedText(
     this.text, {
-    Key? key,
+    super.key,
     this.params = const {},
     this.style,
     this.textAlign,
@@ -123,19 +119,18 @@ class LocalizedText extends StatelessWidget {
     this.textDirection,
     this.locale,
     this.softWrap,
-    this.textScaleFactor,
+    this.textScaler,
     this.maxLines,
     this.semanticsLabel,
     this.textWidthBasis,
     this.textHeightBehavior,
     this.uppercase = false,
     this.selectable = false,
-  })  : textSpan = null,
-        super(key: key);
+  }) : textSpan = null;
 
   const LocalizedText.selectable(
     this.text, {
-    Key? key,
+    super.key,
     this.params = const {},
     this.style,
     this.textAlign,
@@ -144,15 +139,14 @@ class LocalizedText extends StatelessWidget {
     this.textDirection,
     this.locale,
     this.softWrap,
-    this.textScaleFactor,
+    this.textScaler,
     this.maxLines,
     this.semanticsLabel,
     this.textWidthBasis,
     this.textHeightBehavior,
     this.uppercase = false,
   })  : textSpan = null,
-        selectable = true,
-        super(key: key);
+        selectable = true;
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +181,7 @@ class LocalizedText extends StatelessWidget {
       locale: locale ?? localizations?.locale,
       softWrap: softWrap ?? defaultTextStyle.softWrap,
       overflow: overflow ?? effectiveTextStyle?.overflow ?? defaultTextStyle.overflow,
-      textScaleFactor: textScaleFactor ?? MediaQuery.textScaleFactorOf(context),
+      textScaler: textScaler ?? MediaQuery.textScalerOf(context),
       maxLines: maxLines ?? defaultTextStyle.maxLines,
       strutStyle: strutStyle,
       textWidthBasis: textWidthBasis ?? defaultTextStyle.textWidthBasis,
@@ -202,7 +196,7 @@ class LocalizedText extends StatelessWidget {
         effectiveTextSpan,
         textAlign: textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start,
         textDirection: textDirection ?? localizations?.textDirection,
-        textScaleFactor: textScaleFactor ?? MediaQuery.textScaleFactorOf(context),
+        textScaler: textScaler ?? MediaQuery.textScalerOf(context),
         maxLines: maxLines ?? defaultTextStyle.maxLines,
         strutStyle: strutStyle,
         textWidthBasis: textWidthBasis ?? defaultTextStyle.textWidthBasis,

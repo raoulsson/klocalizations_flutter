@@ -1,5 +1,3 @@
-library klocalizations_flutter;
-
 export './src/klocalizations.dart';
 export './src/klocalizations_loader.dart';
 export './src/klocalizations_delegate.dart';

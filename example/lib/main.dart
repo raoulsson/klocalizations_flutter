@@ -69,7 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
     var theme = Theme.of(context);
     var klocalizations = KLocalizations.of(context);
 
-    var headline5;
     return Scaffold(
       appBar: AppBar(
         title: LocalizedText(widget.title),
