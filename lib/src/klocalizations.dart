@@ -131,7 +131,7 @@ class KLocalizations extends ChangeNotifier {
       translation = key;
     }
 
-    if (params != null && translation != key) {
+    if (params != null) {
       translation = interpolate(translation, params: params);
     }
 

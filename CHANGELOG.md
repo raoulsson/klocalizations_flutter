@@ -20,3 +20,6 @@
 
 ## 0.0.9
 * Updated dependencies
+
+## 1.0.2
+* `translate` now interpolates `params` even when the resolved translation equals the key (e.g. when the key itself is the English source string, or on missing-translation fallback). Previously interpolation was skipped in that case, leaving `{{placeholder}}` tokens unreplaced. `interpolate` is a no-op when the string contains no placeholders, so keys without params are unaffected.
