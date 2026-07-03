@@ -2,13 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:klocalizations_flutter/klocalizations_flutter.dart';
 import 'package:klocalizations_flutter/src/klocalizations_loader.dart';
 import 'package:klocalizations_flutter/src/utils.dart';
-import 'package:provider/provider.dart';
 
 /// This is the clase you will use to setup and consume localizations, refer to the [README]() for more detailed info.
 class KLocalizations extends ChangeNotifier {
-  /// Creates [KLocalizations] wrapped in a [ChangeNotifierProvider]
-  /// After we can get access to [KLocalizations] by calling [KLocalizations.of(context)]
-  static ChangeNotifierProvider<KLocalizations> asChangeNotifier({
+  /// Wraps [child] in a [KLocalizationsScope] exposing a [KLocalizations]
+  /// instance, retrievable via [KLocalizations.of].
+  static Widget asChangeNotifier({
     required List<Locale> supportedLocales,
     required Locale locale,
     required Locale defaultLocale,
@@ -16,21 +15,23 @@ class KLocalizations extends ChangeNotifier {
     Widget? child,
     KLocalizationsLoader? loader,
   }) {
-    return ChangeNotifierProvider(
-      create: (context) => KLocalizations(
+    return KLocalizationsScope(
+      notifier: KLocalizations(
         locale: locale,
         defaultLocale: defaultLocale,
         supportedLocales: supportedLocales,
         localizationsAssetsPath: localizationsAssetsPath ?? 'assets/translations',
         loader: loader,
       ),
-      child: child,
+      child: child ?? const SizedBox.shrink(),
     );
   }
 
   /// Obtains the nearest [KLocalizations] up its widget tree and returns its value.
   static KLocalizations? of(BuildContext context, {bool listen = true}) {
-    return Provider.of<KLocalizations>(context);
+    return context
+        .dependOnInheritedWidgetOfExactType<KLocalizationsScope>()
+        ?.notifier;
   }
 
   KLocalizations({
@@ -155,4 +156,15 @@ class MissingTranslationException implements Exception {
   @override
   String toString() =>
       'Key "$key" is not a string or is missing, make sure keys point to a string.';
+}
+
+/// Inherited widget that exposes a [KLocalizations] instance to its descendants
+/// and rebuilds them whenever the localization changes. Replaces the previous
+/// `provider`-based mechanism with Flutter's built-in [InheritedNotifier].
+class KLocalizationsScope extends InheritedNotifier<KLocalizations> {
+  const KLocalizationsScope({
+    super.key,
+    required KLocalizations super.notifier,
+    required super.child,
+  });
 }
