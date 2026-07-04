@@ -25,3 +25,6 @@
 * `translate` now interpolates `params` even when the resolved translation equals the key (e.g. when the key itself is the English source string, or on missing-translation fallback). Previously interpolation was skipped in that case, leaving `{{placeholder}}` tokens unreplaced. `interpolate` is a no-op when the string contains no placeholders, so keys without params are unaffected.
 ## 1.3.0
 * Removed the `provider` dependency. `KLocalizations.of(context)` and `asChangeNotifier()` now use Flutter's built-in `InheritedNotifier` via the new exported `KLocalizationsScope` widget. Public API is source-compatible for `of()`; `asChangeNotifier()` now returns a `Widget` (was a `ChangeNotifierProvider`). Consumers using Riverpod (or any other state management) can wrap their app in `KLocalizationsScope(notifier: ..., child: ...)` directly.
+
+## 1.3.1
+* `KLocalizations.of(context, listen: false)` now honours the `listen` flag: it looks the scope up via `getInheritedWidgetOfExactType` instead of `dependOnInheritedWidgetOfExactType`, so it no longer registers a dependency. This makes non-reactive reads legal in `initState`, constructors, and event callbacks (previously the flag was ignored and every `of()` call created a dependency, throwing when called from `initState`). `listen: true` (the default) is unchanged.

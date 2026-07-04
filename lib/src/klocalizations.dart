@@ -28,9 +28,20 @@ class KLocalizations extends ChangeNotifier {
   }
 
   /// Obtains the nearest [KLocalizations] up its widget tree and returns its value.
+  ///
+  /// When [listen] is true (the default) the calling widget is registered as a
+  /// dependent and rebuilds whenever the localization changes. When [listen] is
+  /// false the value is looked up without creating a dependency, which is what
+  /// you want in `initState`, constructors, or event callbacks where depending
+  /// on an inherited widget is illegal or unwanted.
   static KLocalizations? of(BuildContext context, {bool listen = true}) {
+    if (listen) {
+      return context
+          .dependOnInheritedWidgetOfExactType<KLocalizationsScope>()
+          ?.notifier;
+    }
     return context
-        .dependOnInheritedWidgetOfExactType<KLocalizationsScope>()
+        .getInheritedWidgetOfExactType<KLocalizationsScope>()
         ?.notifier;
   }
 
