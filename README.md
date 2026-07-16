@@ -1,6 +1,38 @@
 # KLocalizations
 
-[![Pub Version](https://img.shields.io/pub/v/klocalizations_flutter?style=flat-square)](https://pub.dev/packages/klocalizations_flutter)
+> ## DISCONTINUED
+>
+> **This repository has been renamed. Use it under its new name instead:**
+> **[`lokey`](https://pub.dev/packages/lokey) on pub.dev.**
+>
+> This is not a dead fork — it is the same package, continued. Development moved to `lokey` at
+> `1.6.0`, which picks up where this left off (`1.4.0`) and adds pluralization, gender/select,
+> locale-aware date/number/currency formatting, per-key fallback to the default locale, and
+> missing-key observability. The `KLocalizations*` types are renamed to `Lokey*` (`KLocalizations`
+> → `Lokey`, `KLocalizationsScope` → `LokeyScope`); `LocalizedText` and `LanguageSelector` are
+> unchanged. The known consumers, `gemma_http_app_2` and `lazy_language_dog`, were migrated to
+> `lokey` `1.6.0` on 2026-07-16.
+>
+> Nothing here will receive further updates. Do not add new dependencies on this repository.
+>
+> ```yaml
+> # before (this repository)
+> dependencies:
+>   klocalizations_flutter:
+>     git:
+>       url: https://github.com/raoulsson/klocalizations_flutter.git
+>       ref: 1.4.0
+>
+> # after
+> dependencies:
+>   lokey: ^1.6.0
+> ```
+>
+> Note this repository was never published to pub.dev: the `klocalizations_flutter` package on
+> pub.dev is the original by [nombrekeff](https://github.com/nombrekeff/klocalizations_flutter),
+> from which this was spun off, and is unaffected by this notice.
+
+spun off from https://github.com/nombrekeff/klocalizations_flutter
 
 Wrapper around [flutter_localizations](https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html), adding some extra functionality and abstracting some of the common logic. 
 
