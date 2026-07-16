@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
               supportedLocales: klocalizations.supportedLocales,
               onChange: (locale) {
                 klocalizations
-                    .setLocale(locale ?? klocalizations.defaultLocale);
+                    .setLocaleAndReload(locale ?? klocalizations.defaultLocale);
               },
             ),
             LocalizedText.selectable(

@@ -65,5 +65,78 @@ void main() {
     test('returns key when translation is missing', () {
       expect(kl.translate('missing.key'), 'missing.key');
     });
+
+    test('returns key (no throw) when an intermediate segment is a leaf', () {
+      // 'simple' resolves to the String 'Hello'; descending into 'simple.foo'
+      // must not attempt "Hello"["foo"] and throw a TypeError.
+      expect(kl.translate('simple.foo'), 'simple.foo');
+    });
   });
+
+  group('textDirection', () {
+    test('falls back to ltr without _config, even in strict mode', () async {
+      final kl = KLocalizations(
+        locale: const Locale('en'),
+        defaultLocale: const Locale('en'),
+        supportedLocales: const [Locale('en')],
+        throwOnMissingTranslation: true,
+        loader: TestLoader({'simple': 'Hello'}),
+      );
+      await kl.load();
+      expect(kl.textDirection, TextDirection.ltr);
+    });
+
+    test('reads rtl from _config', () async {
+      final kl = KLocalizations(
+        locale: const Locale('ar'),
+        defaultLocale: const Locale('ar'),
+        supportedLocales: const [Locale('ar')],
+        loader: TestLoader({
+          '_config': {'textDirection': 'rtl'},
+        }),
+      );
+      await kl.load();
+      expect(kl.textDirection, TextDirection.rtl);
+    });
+  });
+
+  group('setLocaleAndReload', () {
+    test('loads new strings before notifying, and notifies once', () async {
+      final kl = KLocalizations(
+        locale: const Locale('en'),
+        defaultLocale: const Locale('en'),
+        supportedLocales: const [Locale('en'), Locale('es')],
+        loader: _PerLocaleLoader({
+          const Locale('en'): {'greeting': 'Hello'},
+          const Locale('es'): {'greeting': 'Hola'},
+        }),
+      );
+      await kl.load();
+      expect(kl.translate('greeting'), 'Hello');
+
+      var notifications = 0;
+      String? stringsAtNotify;
+      kl.addListener(() {
+        notifications++;
+        stringsAtNotify = kl.translate('greeting');
+      });
+
+      await kl.setLocaleAndReload(const Locale('es'));
+
+      expect(kl.locale, const Locale('es'));
+      expect(kl.translate('greeting'), 'Hola');
+      expect(notifications, 1);
+      // The listener must observe the already-loaded new strings, not the old.
+      expect(stringsAtNotify, 'Hola');
+    });
+  });
+}
+
+class _PerLocaleLoader extends KLocalizationsLoader {
+  final Map<Locale, Map<String, dynamic>> byLocale;
+  _PerLocaleLoader(this.byLocale);
+
+  @override
+  Future<Map<String, dynamic>> loadMapForLocale(Locale locale) async =>
+      byLocale[locale] ?? <String, dynamic>{};
 }

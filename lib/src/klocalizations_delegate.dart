@@ -7,8 +7,9 @@ class KLocalizationsDelegate extends LocalizationsDelegate<KLocalizations> {
 
   @override
   Future<KLocalizations> load(Locale locale) async {
-    localizations.setLocale(locale, silent: true);
-    await localizations.load();
+    // Silent: this runs inside Flutter's Localizations resolution (during
+    // build), so notifying listeners here would be a notify-during-build.
+    await localizations.setLocaleAndReload(locale, silent: true);
     return localizations;
   }
 

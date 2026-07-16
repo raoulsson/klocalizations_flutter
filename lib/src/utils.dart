@@ -1,10 +1,17 @@
 dynamic getValueFromPath(String jsonPath, Map<String, dynamic> jsonObject) {
   var parts = jsonPath.split(".");
-  var length = parts.length;
   dynamic property = jsonObject;
 
-  for (var i = 0; i < length; i++) {
-    if (property != null) property = property[parts[i]];
+  for (var part in parts) {
+    // Only descend while we still hold a map. If an intermediate segment
+    // resolves to a leaf (String/int/List/...) indexing it with the next
+    // segment would throw (e.g. "Welcome"["title"]); return null instead so
+    // translate() can apply its missing-key fallback.
+    if (property is Map) {
+      property = property[part];
+    } else {
+      return null;
+    }
   }
 
   return property;

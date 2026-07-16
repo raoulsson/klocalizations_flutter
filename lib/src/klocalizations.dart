@@ -88,16 +88,16 @@ class KLocalizations extends ChangeNotifier {
   /// Returns the supported locale names
   get supportedLocaleNames => supportedLocales.map((locale) => locale.languageCode);
 
-  /// Returns [TextDirection] for the current locale if specified, otherwise returns [TextDirection.ltr]
+  /// Returns [TextDirection] for the current locale if specified, otherwise returns [TextDirection.ltr].
+  ///
+  /// Reads the optional `_config.textDirection` key directly from the loaded
+  /// strings rather than through [translate], so it is never subject to
+  /// [throwOnMissingTranslation]: an internal config probe must not throw just
+  /// because a translation file omits the (optional) `_config` block, and it
+  /// must be safe to call before the first [load] when nothing is loaded yet.
   TextDirection get textDirection {
-    var localeConfigDirection = translate('_config.textDirection');
-    switch (localeConfigDirection) {
-      case 'rtl':
-        return TextDirection.rtl;
-      case 'ltr':
-      default:
-        return TextDirection.ltr;
-    }
+    final localeConfigDirection = getValueFromPath('_config.textDirection', _localizedStrings);
+    return localeConfigDirection == 'rtl' ? TextDirection.rtl : TextDirection.ltr;
   }
 
   /// Searches for a given [languageCode] in the list of [supportedLocales], if there is a match the [Locale] is returned.
@@ -118,9 +118,29 @@ class KLocalizations extends ChangeNotifier {
     );
   }
 
-  /// Set the locale, and notify listeners if [silent] is `false`
+  /// Sets [_locale] without reloading translations, and notifies listeners
+  /// unless [silent].
+  ///
+  /// This is the low-level primitive. Prefer [setLocaleAndReload] for a
+  /// user-driven language switch: calling this alone changes [locale] but
+  /// leaves [_localizedStrings] pointing at the previous locale, so
+  /// [translate] returns the old language until something else reloads.
   void setLocale(Locale locale, {bool silent = false}) {
     _locale = locale;
+    if (!silent) notifyListeners();
+  }
+
+  /// Switches to [locale], reloads its translations, and only then notifies
+  /// listeners (unless [silent]).
+  ///
+  /// This is the correct entry point for a reactive language switch. The
+  /// previous [setLocale] + async [load] split meant listeners rebuilt against
+  /// the old strings and never heard about the freshly loaded ones; doing the
+  /// load first and notifying once means every dependent refreshes together
+  /// against the new language.
+  Future<void> setLocaleAndReload(Locale locale, {bool silent = false}) async {
+    _locale = locale;
+    await load();
     if (!silent) notifyListeners();
   }
 
